@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>رَفوف | المنصة الشاملة</title>
+    <title>رَفوف | تواصل وتبادل</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -35,17 +35,11 @@
 
         .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; height: 75px; z-index: 1000; border-radius: 2.2rem; display: none; justify-content: space-around; align-items: center; }
         
-        #announcement-bar { background: linear-gradient(90deg, #0ea5e9, #6366f1); padding: 12px; text-align: center; font-size: 11px; font-weight: 900; display: none; position: sticky; top: 0; z-index: 200; border-radius: 0 0 20px 20px; }
-
-        .notif-dot { position: absolute; top: -2px; right: -2px; width: 10px; height: 10px; background: #ef4444; border-radius: 50%; border: 2px solid #020617; display: none; }
-
         .bubble { max-width: 85%; padding: 14px 18px; font-size: 14px; margin-bottom: 6px; position: relative; }
         .bubble.mine { background: linear-gradient(135deg, #0284c7, #0ea5e9); align-self: flex-end; border-radius: 22px 22px 4px 22px; }
         .bubble.theirs { background: rgba(255, 255, 255, 0.07); align-self: flex-start; border-radius: 22px 22px 22px 4px; }
         
         ::-webkit-scrollbar { width: 0px; }
-
-        /* تعديلات المربعات للكتب */
         .book-card-img { aspect-ratio: 1 / 1; object-fit: cover; border-radius: 1.5rem; }
     </style>
 </head>
@@ -54,34 +48,20 @@
     <div class="bg-fixed"></div>
     <div class="overlay"></div>
 
-    <div id="announcement-bar"></div>
-
-    <!-- رسالة الحظر -->
-    <div id="banned-msg" class="fixed inset-0 bg-black z-[9999] hidden items-center justify-center p-10 text-center">
-        <div class="glass p-10 rounded-[3rem] border-red-500/30">
-            <i data-lucide="shield-x" class="w-20 h-20 text-red-500 mx-auto mb-6"></i>
-            <h1 class="text-3xl font-black mb-4 text-white">الدخول مرفوض</h1>
-            <p class="opacity-50 text-white">لقد تم حظر هذا الحساب لمخالفته شروط الاستخدام.</p>
-        </div>
-    </div>
-
     <!-- شاشة الدخول -->
     <section id="scr-login" class="screen active items-center justify-center !pb-0 px-8">
-        <div class="w-full max-sm text-center">
-            <div class="mb-10 relative inline-block">
-                <div class="w-24 h-24 bg-sky-500 rounded-[2.5rem] flex items-center justify-center shadow-2xl rotate-6 animate-pulse">
-                    <i data-lucide="book-marked" class="w-12 h-12 text-white -rotate-6"></i>
-                </div>
+        <div class="w-full max-w-sm text-center">
+            <div class="mb-10 w-24 h-24 bg-sky-500 rounded-[2.5rem] flex items-center justify-center mx-auto shadow-2xl rotate-6 animate-pulse">
+                <i data-lucide="book-marked" class="w-12 h-12 text-white -rotate-6"></i>
             </div>
             <h1 class="text-6xl font-black italic mb-2 tracking-tighter text-white">رَفوف</h1>
             <p class="text-sky-400 font-bold text-sm mb-12 uppercase tracking-widest">مبادلة الكتب بلمسة عصرية</p>
-            
             <div class="space-y-4">
                 <input id="login-phone" type="tel" placeholder="رقم الموبايل" class="w-full p-6 rounded-3xl bg-white/5 border border-white/10 text-center font-bold outline-none text-white focus:bg-white/10 transition-all">
                 <div id="new-user-fields" class="hidden animate-fadeIn">
                     <input id="login-name" type="text" placeholder="اسمك بالكامل" class="w-full p-6 rounded-3xl bg-white/5 border border-white/10 text-center font-bold text-white outline-none mb-4">
                 </div>
-                <button onclick="checkUser()" class="w-full bg-sky-500 py-6 rounded-3xl font-black text-xl text-white shadow-2xl shadow-sky-900/40 active:scale-95 transition-all">دخول</button>
+                <button onclick="checkUser()" class="w-full bg-sky-500 py-6 rounded-3xl font-black text-xl text-white shadow-2xl active:scale-95 transition-all">دخول</button>
             </div>
         </div>
     </section>
@@ -89,58 +69,77 @@
     <!-- الرئيسية -->
     <section id="scr-main" class="screen pt-6">
         <header class="p-6 flex justify-between items-center">
-            <div>
-                <h2 class="text-4xl font-black italic tracking-tighter text-white">رَفوف</h2>
-                <div id="admin-indicator" class="hidden mt-1"><span class="bg-amber-500 text-black px-2 py-0.5 rounded text-[10px] font-black uppercase">إدارة</span></div>
-            </div>
+            <h2 class="text-4xl font-black italic tracking-tighter text-white">رَفوف</h2>
             <div class="flex gap-3">
                 <button onclick="nav('scr-profile')" class="w-12 h-12 rounded-2xl glass p-1"><img id="header-pfp" src="" class="w-full h-full object-cover rounded-xl"></button>
                 <button onclick="openAdd()" class="w-12 h-12 glass flex items-center justify-center text-white rounded-2xl"><i data-lucide="plus"></i></button>
             </div>
         </header>
-
         <div class="px-6 mb-6">
             <div class="relative glass rounded-2xl overflow-hidden flex items-center px-4">
-                <i data-lucide="search" class="w-5 h-5 opacity-30"></i>
+                <i data-lucide="search" class="w-5 h-5 opacity-30 text-white"></i>
                 <input id="book-search" oninput="searchBooks()" type="text" placeholder="ابحث عن كتاب..." class="w-full p-4 bg-transparent outline-none text-sm font-bold text-white">
             </div>
         </div>
-
         <div id="books-list" class="overflow-y-auto px-6 space-y-8 pb-28"></div>
     </section>
 
-    <!-- الرسايل -->
+    <!-- شاشة بروفايل شخص آخر -->
+    <section id="scr-user-view" class="screen pt-6 overflow-y-auto">
+        <header class="p-6 flex items-center gap-4">
+            <button onclick="nav('scr-main')" class="p-2 glass rounded-xl text-white"><i data-lucide="arrow-right"></i></button>
+            <h3 class="font-black text-lg text-white">الملف الشخصي</h3>
+        </header>
+        <div class="flex flex-col items-center px-6 text-center">
+            <div class="w-32 h-32 rounded-[3rem] glass p-1.5 shadow-2xl mb-4">
+                <img id="view-pfp" src="" class="w-full h-full object-cover rounded-[2.8rem]">
+            </div>
+            <h3 id="view-name" class="text-3xl font-black mb-2 text-white">...</h3>
+            
+            <div class="flex gap-8 mb-6 bg-white/5 py-3 px-8 rounded-3xl border border-white/5">
+                <div>
+                    <p id="view-fers" class="text-xl font-black text-sky-400">0</p>
+                    <p class="text-[9px] font-black opacity-40 uppercase text-white">متابع</p>
+                </div>
+                <div class="w-[1px] bg-white/10 h-8 self-center"></div>
+                <div>
+                    <p id="view-fing" class="text-xl font-black text-white">0</p>
+                    <p class="text-[9px] font-black opacity-40 uppercase text-white">يتابع</p>
+                </div>
+            </div>
+
+            <button id="view-follow-btn" onclick="toggleFollowView()" class="w-full max-w-xs py-4 rounded-2xl font-black text-sm mb-8 transition-all"></button>
+
+            <div class="w-full text-right mb-4">
+                <h4 class="text-xs font-black opacity-40 uppercase mr-2 text-white italic">كتب هذا المستخدم</h4>
+            </div>
+            <div id="view-user-books" class="w-full space-y-6 pb-20"></div>
+        </div>
+    </section>
+
+    <!-- المحادثات -->
     <section id="scr-chats" class="screen pt-12 px-6">
         <h2 class="text-4xl font-black mb-8 italic text-white">المحادثات</h2>
         <div id="chats-list" class="space-y-3 overflow-y-auto"></div>
     </section>
 
-    <!-- المحادثة -->
+    <!-- المحادثة النشطة -->
     <section id="scr-chat-window" class="screen bg-slate-950 !pb-0">
         <header class="p-4 glass rounded-none flex items-center gap-4 border-none border-b border-white/5 z-50">
             <button onclick="nav('scr-chats')" class="p-2 text-white"><i data-lucide="arrow-right"></i></button>
-            <div class="relative">
-                <img id="chat-target-pfp" src="" class="w-11 h-11 rounded-full object-cover glass border border-sky-500/30">
-                <div class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-950"></div>
-            </div>
-            <div class="flex-grow">
-                <h4 id="chat-target-name" class="font-bold text-sm text-white">...</h4>
-                <p class="text-[9px] text-emerald-500 font-black uppercase">نشط الآن</p>
-            </div>
-            <button id="admin-ban-btn" onclick="adminBanUser()" class="hidden text-red-500 bg-red-500/10 px-3 py-2 rounded-xl text-[10px] font-black border border-red-500/20">حظر</button>
+            <img id="chat-target-pfp" src="" class="w-11 h-11 rounded-full object-cover glass">
+            <h4 id="chat-target-name" class="font-bold text-sm text-white flex-grow">...</h4>
         </header>
         <div id="chat-messages" class="flex-grow overflow-y-auto p-6 flex flex-col pt-8"></div>
         <div class="p-4 pb-10">
-            <div class="glass flex gap-2 p-2 px-3 items-center rounded-3xl border-white/10 shadow-2xl">
+            <div class="glass flex gap-2 p-2 px-3 items-center rounded-3xl border-white/10">
                 <input id="chat-input" type="text" placeholder="اكتب شيئاً..." class="flex-grow bg-transparent p-3 text-sm text-white outline-none">
-                <button onclick="sendMessage()" class="w-12 h-12 bg-sky-500 rounded-full flex items-center justify-center text-white shadow-lg active:scale-90 transition-all">
-                    <i data-lucide="send" class="w-5 h-5 mr-1"></i>
-                </button>
+                <button onclick="sendMessage()" class="w-12 h-12 bg-sky-500 rounded-full flex items-center justify-center text-white"><i data-lucide="send" class="w-5 h-5 mr-1"></i></button>
             </div>
         </div>
     </section>
 
-    <!-- الملف الشخصي -->
+    <!-- بروفايلي -->
     <section id="scr-profile" class="screen pt-12 px-6 overflow-y-auto items-center">
         <div class="w-full max-w-md flex flex-col items-center text-center">
             <div class="relative mb-6">
@@ -149,40 +148,18 @@
                 </div>
                 <button onclick="editPfpPrompt()" class="absolute bottom-0 right-0 bg-sky-500 w-10 h-10 rounded-2xl flex items-center justify-center border-4 border-slate-950 text-white"><i data-lucide="camera" class="w-5 h-5"></i></button>
             </div>
-            <h3 id="profile-name" class="text-3xl font-black mb-2 tracking-tighter text-white">...</h3>
+            <h3 id="profile-name" class="text-3xl font-black mb-2 text-white">...</h3>
             
-            <!-- إحصائيات المتابعة -->
-            <div class="flex gap-8 mb-8">
-                <div class="text-center">
-                    <p id="count-followers" class="text-xl font-black text-sky-400">0</p>
-                    <p class="text-[9px] font-black uppercase opacity-40">المتابعون</p>
-                </div>
-                <div class="text-center">
-                    <p id="count-following" class="text-xl font-black text-white">0</p>
-                    <p class="text-[9px] font-black uppercase opacity-40">يتابع</p>
-                </div>
+            <div class="flex gap-8 mb-8 bg-white/5 py-4 px-8 rounded-3xl border border-white/5">
+                <div><p id="count-followers" class="text-2xl font-black text-sky-400">0</p><p class="text-[10px] font-black opacity-40 uppercase text-white">متابع</p></div>
+                <div class="w-[1px] bg-white/10 h-10 self-center"></div>
+                <div><p id="count-following" class="text-2xl font-black text-white">0</p><p class="text-[10px] font-black opacity-40 uppercase text-white">يتابع</p></div>
             </div>
 
             <div class="glass p-8 w-full rounded-[2.5rem] mb-6 space-y-6">
-                <div class="space-y-2 text-right">
-                    <label class="text-[10px] font-black opacity-30 mr-2 uppercase text-white">الاسم الظاهر</label>
-                    <input id="edit-name" type="text" class="w-full bg-white/5 p-4 rounded-2xl outline-none focus:border-sky-500 border border-white/5 text-white">
-                </div>
-                <button onclick="saveProfile()" class="w-full bg-sky-500 py-5 rounded-2xl font-black text-white shadow-xl">تحديث البيانات</button>
+                <input id="edit-name" type="text" class="w-full bg-white/5 p-4 rounded-2xl outline-none border border-white/5 text-white">
+                <button onclick="saveProfile()" class="w-full bg-sky-500 py-5 rounded-2xl font-black text-white">تحديث البيانات</button>
             </div>
-
-            <div id="admin-panel" class="hidden glass p-8 w-full rounded-[2.5rem] border-amber-500/20 mb-6 space-y-6">
-                <h4 class="text-amber-500 font-black text-xs uppercase flex items-center justify-center gap-2"><i data-lucide="shield-check" class="w-4 h-4"></i> لوحة الإدارة</h4>
-                <div class="space-y-3">
-                    <input id="adm-ann-msg" type="text" placeholder="نص الإعلان..." class="w-full bg-white/5 p-4 rounded-2xl text-xs border border-white/5 outline-none text-white">
-                    <div class="flex gap-2">
-                        <button onclick="adminPostAnn()" class="flex-1 bg-amber-600 py-4 rounded-2xl text-[10px] font-black text-white">نشر</button>
-                        <button onclick="adminHideAnn()" class="flex-1 bg-white/5 py-4 rounded-2xl text-[10px] font-black text-white">إخفاء</button>
-                    </div>
-                </div>
-                <button onclick="adminViewInvoices()" class="w-full bg-white/5 py-4 rounded-2xl text-[10px] font-black border border-white/5 text-white">سجل التبادلات</button>
-            </div>
-
             <button onclick="logout()" class="w-full bg-red-500/10 text-red-500 py-5 rounded-2xl font-black text-xs uppercase mb-12 border border-red-500/10">تسجيل الخروج</button>
         </div>
     </section>
@@ -190,16 +167,13 @@
     <!-- الملاحة -->
     <nav id="nav-bar" class="nav-bar glass shadow-2xl border-white/10">
         <div onclick="nav('scr-main')" id="n-main" class="flex flex-col items-center gap-1 cursor-pointer transition-all text-white"><i data-lucide="layout-grid"></i><span class="text-[9px] font-black">الرئيسية</span></div>
-        <div onclick="nav('scr-chats')" id="n-chats" class="relative flex flex-col items-center gap-1 opacity-30 cursor-pointer transition-all text-white">
-            <i data-lucide="message-square"></i><span class="text-[9px] font-black">الدردشة</span>
-            <div id="notif-dot-nav" class="notif-dot !top-[-4px] !right-[2px]"></div>
-        </div>
+        <div onclick="nav('scr-chats')" id="n-chats" class="flex flex-col items-center gap-1 opacity-30 cursor-pointer transition-all text-white"><i data-lucide="message-square"></i><span class="text-[9px] font-black">الدردشة</span></div>
         <div onclick="nav('scr-profile')" id="n-profile" class="flex flex-col items-center gap-1 opacity-30 cursor-pointer transition-all text-white"><i data-lucide="circle-user"></i><span class="text-[9px] font-black">حسابي</span></div>
     </nav>
 
     <!-- مودال إضافة كتاب -->
     <div id="mod-book" class="fixed inset-0 bg-black/80 hidden z-[2000] items-center justify-center p-6 backdrop-blur-2xl">
-        <div class="glass p-8 w-full max-w-md rounded-[3rem] animate-fadeIn border-white/20">
+        <div class="glass p-8 w-full max-w-md rounded-[3rem]">
             <h3 class="text-3xl font-black mb-6 text-sky-400">نشر كتاب</h3>
             <div class="space-y-4">
                 <input id="book-t" type="text" placeholder="عنوان الكتاب" class="w-full p-5 bg-white/5 rounded-2xl border border-white/10 outline-none text-white">
@@ -207,24 +181,9 @@
                 <textarea id="book-d" placeholder="نبذة عن الكتاب..." class="w-full p-5 bg-white/5 rounded-2xl border border-white/10 outline-none h-28 text-white"></textarea>
                 <div class="flex gap-3 pt-4">
                     <button onclick="closeBookMod()" class="flex-1 bg-white/10 py-5 rounded-2xl font-black text-xs text-white">إلغاء</button>
-                    <button onclick="saveBook()" class="flex-[2] bg-sky-500 py-5 rounded-2xl font-black text-sm text-white">نشر الآن</button>
+                    <button onclick="saveBook()" class="flex-[2] bg-sky-500 py-5 rounded-2xl font-black text-sm text-white">نشر</button>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- مودال الإيصال -->
-    <div id="mod-invoice" class="fixed inset-0 bg-black/90 hidden z-[3000] items-center justify-center p-6 backdrop-blur-md">
-        <div class="glass p-10 w-full max-w-sm rounded-[3rem] border-emerald-500/30 text-center">
-            <div class="w-16 h-16 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="check" class="w-8 h-8"></i></div>
-            <h3 class="font-black text-2xl mb-2 text-white">إيصال موثق</h3>
-            <p id="inv-date" class="text-[10px] opacity-30 mb-8 text-white">...</p>
-            <div class="space-y-4 text-right bg-white/5 p-6 rounded-[2rem]">
-                <div class="flex justify-between text-xs text-white"><span class="opacity-40">المبادل الأول:</span> <span id="inv-p1" class="font-black">...</span></div>
-                <div class="flex justify-between text-xs text-white"><span class="opacity-40">المبادل الثاني:</span> <span id="inv-p2" class="font-black">...</span></div>
-                <div class="flex justify-between text-xs border-t border-white/5 pt-3 mt-3 text-white"><span class="opacity-40">الكتاب:</span> <span id="inv-book" class="font-black text-sky-400">...</span></div>
-            </div>
-            <button onclick="document.getElementById('mod-invoice').classList.replace('flex','hidden')" class="mt-8 w-full bg-white/10 py-5 rounded-2xl text-xs font-black text-white">إغلاق</button>
         </div>
     </div>
 
@@ -236,109 +195,56 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        const ADMIN_PHONE = "0123456789"; 
         let user = JSON.parse(localStorage.getItem('rafouf_u'));
+        let allBooks = [];
+        let viewingUser = null;
         let chatTarget = null;
         let currentChatRef = null;
-        let allBooks = [];
 
         window.nav = (id) => {
             const screens = document.querySelectorAll('.screen');
             screens.forEach(s => s.classList.remove('active'));
-            const target = document.getElementById(id);
-            if(target) target.classList.add('active');
-
+            document.getElementById(id).classList.add('active');
             document.querySelectorAll('nav div').forEach(d => d.classList.add('opacity-30'));
             const map = {'scr-main':'n-main','scr-chats':'n-chats','scr-profile':'n-profile'};
-            if(map[id] && document.getElementById(map[id])) document.getElementById(map[id]).classList.remove('opacity-30');
-            
-            if(id === 'scr-chats') {
-                const navDot = document.getElementById('notif-dot-nav');
-                if(navDot) navDot.style.display = 'none';
-            }
+            if(map[id]) document.getElementById(map[id]).classList.remove('opacity-30');
             lucide.createIcons();
         };
 
         window.checkUser = async () => {
             const p = document.getElementById('login-phone').value.trim();
             if(!p) return;
-
-            const banSnap = await get(ref(db, `banned/${p}`));
-            if(banSnap.exists()){
-                document.getElementById('banned-msg').classList.replace('hidden', 'flex');
-                return;
-            }
-
             const snap = await get(ref(db, `users/${p}`));
             if(snap.exists()){
                 user = snap.val();
-                localStorage.setItem('rafouf_u', JSON.stringify(user));
-                loginSuccess();
             } else {
-                const nameField = document.getElementById('new-user-fields');
-                if(nameField.classList.contains('hidden')){
-                    nameField.classList.remove('hidden');
-                } else {
-                    const n = document.getElementById('login-name').value.trim();
-                    if(!n) return;
-                    user = { 
-                        name: n, 
-                        phone: p, 
-                        pfp: `https://api.dicebear.com/7.x/avataaars/svg?seed=${n}`, 
-                        followers: 0, 
-                        following: 0,
-                        lastSeen: Date.now() 
-                    };
-                    await set(ref(db, `users/${p}`), user);
-                    localStorage.setItem('rafouf_u', JSON.stringify(user));
-                    loginSuccess();
-                }
+                const n = document.getElementById('login-name').value.trim();
+                if(!n) { document.getElementById('new-user-fields').classList.remove('hidden'); return; }
+                user = { name: n, phone: p, pfp: `https://api.dicebear.com/7.x/avataaars/svg?seed=${n}`, followers: 0, following: 0 };
+                await set(ref(db, `users/${p}`), user);
             }
+            localStorage.setItem('rafouf_u', JSON.stringify(user));
+            loginSuccess();
         };
 
         function loginSuccess() {
-            const nav = document.getElementById('nav-bar');
-            if(nav) nav.style.display = 'flex';
+            document.getElementById('nav-bar').style.display = 'flex';
             window.nav('scr-main');
             updateUI();
             syncData();
-            if(user.phone === ADMIN_PHONE) {
-                const indicator = document.getElementById('admin-indicator');
-                const panel = document.getElementById('admin-panel');
-                const banBtn = document.getElementById('admin-ban-btn');
-                if(indicator) indicator.classList.remove('hidden');
-                if(panel) panel.classList.remove('hidden');
-                if(banBtn) banBtn.classList.remove('hidden');
-            }
         }
 
         function updateUI() {
             if(!user) return;
-            const hPfp = document.getElementById('header-pfp');
-            const pImg = document.getElementById('profile-img');
-            const pName = document.getElementById('profile-name');
-            const eName = document.getElementById('edit-name');
-            const fers = document.getElementById('count-followers');
-            const fing = document.getElementById('count-following');
-
-            if(hPfp) hPfp.src = user.pfp;
-            if(pImg) pImg.src = user.pfp;
-            if(pName) pName.innerText = user.name;
-            if(eName) eName.value = user.name;
-            if(fers) fers.innerText = user.followers || 0;
-            if(fing) fing.innerText = user.following || 0;
+            document.getElementById('header-pfp').src = user.pfp;
+            document.getElementById('profile-img').src = user.pfp;
+            document.getElementById('profile-name').innerText = user.name;
+            document.getElementById('edit-name').value = user.name;
+            document.getElementById('count-followers').innerText = user.followers || 0;
+            document.getElementById('count-following').innerText = user.following || 0;
         }
 
         function syncData() {
-            onValue(ref(db, 'system/announcement'), (snap) => {
-                const bar = document.getElementById('announcement-bar');
-                if(bar && snap.exists() && snap.val().active){
-                    bar.innerText = snap.val().msg;
-                    bar.style.display = 'block';
-                } else if(bar) bar.style.display = 'none';
-            });
-
-            // تحديث بيانات المستخدم الحالي لحظياً (للمتابعات)
             onValue(ref(db, `users/${user.phone}`), (snap) => {
                 if(snap.exists()) {
                     user = snap.val();
@@ -346,151 +252,104 @@
                     updateUI();
                 }
             });
-
             onValue(ref(db, 'content'), (snap) => {
                 allBooks = [];
                 if(snap.exists()) {
                     Object.entries(snap.val()).forEach(([id, data]) => allBooks.push({id, ...data}));
                     renderBooks(allBooks.reverse());
+                    if(viewingUser) renderUserView(viewingUser.phone);
                 }
-            });
-
-            onValue(ref(db, `user_chats/${user.phone}`), (snap) => {
-                const list = document.getElementById('chats-list');
-                if(!list) return;
-                list.innerHTML = '';
-                if(snap.exists()){
-                    let hasNew = false;
-                    Object.entries(snap.val()).forEach(([id, c]) => {
-                        if(c.unread) hasNew = true;
-                        list.innerHTML += `
-                            <div onclick="openChat('${id}')" class="glass p-5 rounded-[2rem] flex items-center gap-4 cursor-pointer hover:bg-white/5 transition-all text-white">
-                                <div class="relative">
-                                    <img src="${c.pfp}" class="w-14 h-14 rounded-2xl object-cover glass p-0.5">
-                                    ${c.unread ? '<div class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-slate-900"></div>' : ''}
-                                </div>
-                                <div class="flex-grow">
-                                    <h4 class="font-black text-base">${c.name}</h4>
-                                    <p class="text-[10px] opacity-40">${c.lastMsg || 'اضغط لبدء المراسلة'}</p>
-                                </div>
-                                <i data-lucide="chevron-left" class="opacity-20"></i>
-                            </div>`;
-                    });
-                    const navDot = document.getElementById('notif-dot-nav');
-                    if(navDot) navDot.style.display = hasNew ? 'block' : 'none';
-                }
-                lucide.createIcons();
             });
         }
 
         function renderBooks(books) {
             const list = document.getElementById('books-list');
-            if(!list) return;
             list.innerHTML = '';
             books.forEach(b => {
-                const isOwner = b.ownerId === user.phone || user.phone === ADMIN_PHONE;
                 const liked = b.likedBy && b.likedBy[user.phone];
-                const isFollowing = user.followingList && user.followingList[b.ownerId];
-                
-                let commentsHtml = '';
-                if(b.comments) {
-                    Object.values(b.comments).forEach(c => {
-                        commentsHtml += `<div class="flex gap-2 mb-2 items-start bg-white/5 p-2 rounded-xl">
-                            <img src="${c.pfp}" class="w-6 h-6 rounded-full object-cover">
-                            <div class="flex-grow">
-                                <p class="text-[9px] font-black text-sky-400">@${c.name}</p>
-                                <p class="text-[10px] text-white">${c.text}</p>
-                            </div>
-                        </div>`;
-                    });
-                }
-
                 list.innerHTML += `
-                    <div class="glass p-5 rounded-[2.5rem] flex flex-col relative shadow-xl">
-                        ${isOwner ? `<div class="absolute top-4 left-4 flex gap-2 z-20">
-                            <button onclick="deleteBook('${b.id}')" class="p-2 bg-red-500/10 rounded-lg text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </div>` : ''}
-                        
+                    <div class="glass p-5 rounded-[2.5rem] flex flex-col relative">
                         <div class="flex gap-5 mb-5 items-start">
-                            <img src="${b.cover}" class="book-card-img w-28 h-28 shadow-2xl shrink-0">
-                            <div class="flex-grow pt-1 text-right">
-                                <h3 class="font-black text-xl leading-tight mb-1 text-white">${b.title}</h3>
-                                
-                                <div class="flex items-center gap-2 mb-2">
+                            <img src="${b.cover}" class="book-card-img w-28 h-28 shrink-0 shadow-2xl">
+                            <div class="flex-grow text-right">
+                                <h3 class="font-black text-lg mb-1 text-white">${b.title}</h3>
+                                <div onclick="openUserView('${b.ownerId}')" class="flex items-center gap-2 mb-2 cursor-pointer">
                                     <p class="text-[10px] text-sky-400 font-black uppercase">@${b.ownerName}</p>
-                                    ${!isOwner ? `
-                                        <button onclick="toggleFollow('${b.ownerId}')" class="text-[8px] font-black px-2 py-1 rounded-full border ${isFollowing ? 'border-white/20 text-white opacity-40' : 'border-sky-500/50 text-sky-400'}">
-                                            ${isFollowing ? 'إلغاء المتابعة' : 'متابعة'}
-                                        </button>
-                                    ` : ''}
                                 </div>
-
-                                <p class="text-[11px] text-white opacity-40 line-clamp-2">${b.description || 'لا يوجد وصف.'}</p>
+                                <p class="text-[10px] text-white opacity-40 line-clamp-2">${b.description || ''}</p>
                             </div>
                         </div>
-
-                        <div class="mb-4 max-h-32 overflow-y-auto pr-1">
-                            ${commentsHtml}
-                        </div>
-
-                        <div class="flex gap-2 mb-4">
-                            <input id="inp-comm-${b.id}" type="text" placeholder="اكتب تعليقاً..." class="flex-grow bg-white/5 p-3 rounded-xl text-[10px] outline-none text-white border border-white/5">
-                            <button onclick="addComment('${b.id}')" class="bg-sky-500 p-3 rounded-xl text-white"><i data-lucide="message-circle" class="w-4 h-4"></i></button>
-                        </div>
-
                         <div class="flex justify-between items-center pt-4 border-t border-white/5">
-                            <div class="flex gap-4">
-                                <button onclick="toggleLike('${b.id}')" class="flex items-center gap-1.5 text-xs ${liked ? 'text-red-500' : 'text-white opacity-30'}">
-                                    <i data-lucide="heart" class="w-5 h-5 ${liked ? 'fill-red-500' : ''}"></i> <span>${b.likes || 0}</span>
-                                </button>
-                            </div>
-                            <button onclick="requestSwap('${b.ownerId}','${b.ownerName}','${b.title}')" class="bg-sky-500/10 text-sky-400 px-5 py-2.5 rounded-xl text-[10px] font-black border border-sky-500/20 uppercase">طلب تبادل</button>
+                            <button onclick="toggleLike('${b.id}')" class="flex items-center gap-1.5 text-xs ${liked ? 'text-red-500' : 'text-white opacity-30'}">
+                                <i data-lucide="heart" class="w-5 h-5 ${liked ? 'fill-red-500' : ''}"></i> <span>${b.likes || 0}</span>
+                            </button>
+                            <button onclick="requestSwap('${b.ownerId}','${b.ownerName}','${b.title}')" class="bg-sky-500/10 text-sky-400 px-5 py-2.5 rounded-xl text-[10px] font-black border border-sky-500/20">طلب تبادل</button>
                         </div>
                     </div>`;
             });
             lucide.createIcons();
         }
 
-        // نظام المتابعة
-        window.toggleFollow = async (tid) => {
-            if(tid === user.phone) return;
+        // فتح بروفايل مستخدم آخر
+        window.openUserView = async (targetId) => {
+            if(targetId === user.phone) { window.nav('scr-profile'); return; }
+            const snap = await get(ref(db, `users/${targetId}`));
+            if(snap.exists()) {
+                viewingUser = snap.val();
+                renderUserView(targetId);
+                window.nav('scr-user-view');
+            }
+        };
+
+        function renderUserView(targetId) {
+            const snapRef = ref(db, `users/${targetId}`);
+            onValue(snapRef, (s) => {
+                const u = s.val();
+                if(!u) return;
+                document.getElementById('view-pfp').src = u.pfp;
+                document.getElementById('view-name').innerText = u.name;
+                document.getElementById('view-fers').innerText = u.followers || 0;
+                document.getElementById('view-fing').innerText = u.following || 0;
+                
+                const isFollowing = user.followingList && user.followingList[targetId];
+                const btn = document.getElementById('view-follow-btn');
+                btn.innerText = isFollowing ? "إلغاء المتابعة" : "متابعة +";
+                btn.className = isFollowing ? 
+                    "w-full max-w-xs py-4 rounded-2xl font-black text-sm mb-8 bg-white/5 border border-white/10 text-white opacity-50" : 
+                    "w-full max-w-xs py-4 rounded-2xl font-black text-sm mb-8 bg-sky-500 text-white shadow-xl shadow-sky-900/40";
+
+                const booksContainer = document.getElementById('view-user-books');
+                const userBooks = allBooks.filter(b => b.ownerId === targetId);
+                booksContainer.innerHTML = '';
+                userBooks.forEach(b => {
+                    booksContainer.innerHTML += `
+                        <div class="glass p-4 rounded-[2rem] flex gap-4 items-center">
+                            <img src="${b.cover}" class="w-16 h-16 rounded-xl object-cover shrink-0">
+                            <div class="flex-grow text-right">
+                                <h5 class="font-black text-sm text-white">${b.title}</h5>
+                                <p class="text-[9px] opacity-40 text-white">${b.likes} إعجاب</p>
+                            </div>
+                        </div>`;
+                });
+            }, { onlyOnce: false });
+        }
+
+        window.toggleFollowView = async () => {
+            if(!viewingUser) return;
+            const tid = viewingUser.phone;
             const isFollowing = user.followingList && user.followingList[tid];
-            
-            // تحديث بيانات المستخدم الحالي (يتابع)
             await update(ref(db, `users/${user.phone}`), {
                 following: increment(isFollowing ? -1 : 1),
                 [`followingList/${tid}`]: isFollowing ? null : true
             });
-
-            // تحديث بيانات المستخدم المستهدف (متابعون)
             await update(ref(db, `users/${tid}`), {
                 followers: increment(isFollowing ? -1 : 1),
                 [`followersList/${user.phone}`]: isFollowing ? null : true
             });
         };
 
-        window.addComment = async (bid) => {
-            const inp = document.getElementById(`inp-comm-${bid}`);
-            const txt = inp.value.trim();
-            if(!txt) return;
-            await push(ref(db, `content/${bid}/comments`), {
-                name: user.name,
-                pfp: user.pfp,
-                text: txt,
-                time: serverTimestamp()
-            });
-            inp.value = '';
-        };
-
-        window.searchBooks = () => {
-            const q = document.getElementById('book-search').value.toLowerCase();
-            const filtered = allBooks.filter(b => b.title.toLowerCase().includes(q) || b.ownerName.toLowerCase().includes(q));
-            renderBooks(filtered);
-        };
-
         window.toggleLike = async (bid) => {
-            const snap = await get(ref(db, `content/${bid}`));
-            const b = snap.val();
+            const b = allBooks.find(x => x.id === bid);
             const liked = b.likedBy && b.likedBy[user.phone];
             await update(ref(db, `content/${bid}`), {
                 likes: increment(liked ? -1 : 1),
@@ -498,118 +357,30 @@
             });
         };
 
-        window.openChat = async (tid) => {
-            const snap = await get(ref(db, `users/${tid}`));
-            chatTarget = snap.val();
-            const tName = document.getElementById('chat-target-name');
-            const tPfp = document.getElementById('chat-target-pfp');
-            if(tName) tName.innerText = chatTarget.name;
-            if(tPfp) tPfp.src = chatTarget.pfp;
-            
-            window.nav('scr-chat-window');
-            const cid = [user.phone, tid].sort().join('_');
-            
-            update(ref(db, `user_chats/${user.phone}/${tid}`), { unread: false });
-
-            if(currentChatRef) off(currentChatRef);
-            currentChatRef = ref(db, `chats/${cid}`);
-            onValue(currentChatRef, (s) => {
-                const box = document.getElementById('chat-messages'); 
-                if(!box) return;
-                box.innerHTML = '';
-                if(s.exists()){
-                    Object.values(s.val()).forEach(m => { 
-                        box.innerHTML += `<div class="bubble ${m.sender === user.phone ? 'mine' : 'theirs'} text-white">${m.text}</div>`; 
-                    });
-                    box.scrollTop = box.scrollHeight;
-                }
-            });
-        };
-
-        window.sendMessage = () => {
-            const inp = document.getElementById('chat-input');
-            if(!inp || !inp.value.trim() || !chatTarget) return;
-            const cid = [user.phone, chatTarget.phone].sort().join('_');
-            const txt = inp.value;
-            push(ref(db, `chats/${cid}`), { sender: user.phone, text: txt, time: serverTimestamp() });
-            update(ref(db, `user_chats/${user.phone}/${chatTarget.phone}`), { lastMsg: txt, pfp: chatTarget.pfp, name: chatTarget.name });
-            update(ref(db, `user_chats/${chatTarget.phone}/${user.phone}`), { lastMsg: txt, pfp: user.pfp, name: user.name, unread: true });
-            inp.value = '';
-        };
-
         window.requestSwap = (oid, oname, title) => {
-            if(oid === user.phone) return;
-            window.openChat(oid);
-            setTimeout(() => {
-                const txt = `طلب تبادل: أرغب في الحصول على كتاب (${title}). هل أنت موافق؟`;
-                const cid = [user.phone, oid].sort().join('_');
-                push(ref(db, `chats/${cid}`), { sender: user.phone, text: txt, time: serverTimestamp() });
-                update(ref(db, `user_chats/${oid}/${user.phone}`), { lastMsg: txt, pfp: user.pfp, name: user.name, unread: true });
-                push(ref(db, 'invoices'), { p1: user.name, p2: oname, book: title, time: serverTimestamp() });
-            }, 800);
+            const cid = [user.phone, oid].sort().join('_');
+            const txt = `أرغب في مبادلة كتابك: ${title}`;
+            push(ref(db, `chats/${cid}`), { sender: user.phone, text: txt });
+            update(ref(db, `user_chats/${user.phone}/${oid}`), { lastMsg: txt, pfp: viewingUser?.pfp || '', name: oname });
+            update(ref(db, `user_chats/${oid}/${user.phone}`), { lastMsg: txt, pfp: user.pfp, name: user.name });
+            window.nav('scr-chats');
         };
 
-        window.adminPostAnn = () => {
-            const msg = document.getElementById('adm-ann-msg').value;
-            if(msg) update(ref(db, 'system/announcement'), { msg, active: true });
-        };
-        window.adminHideAnn = () => update(ref(db, 'system/announcement'), { active: false });
-
-        window.adminBanUser = async () => {
-            if(!chatTarget) return;
-            if(confirm(`حظر ${chatTarget.name} نهائياً؟`)){
-                await set(ref(db, `banned/${chatTarget.phone}`), { by: user.name });
-                window.nav('scr-chats');
-            }
+        window.saveBook = async () => {
+            const t = document.getElementById('book-t').value, c = document.getElementById('book-c').value, d = document.getElementById('book-d').value;
+            if(!t || !c) return;
+            await push(ref(db, 'content'), { title: t, cover: c, description: d, ownerId: user.phone, ownerName: user.name, likes: 0 });
+            closeBookMod();
         };
 
-        window.adminViewInvoices = async () => {
-            const snap = await get(ref(db, 'invoices'));
-            if(snap.exists()){
-                const last = Object.values(snap.val()).pop();
-                document.getElementById('inv-p1').innerText = last.p1;
-                document.getElementById('inv-p2').innerText = last.p2;
-                document.getElementById('inv-book').innerText = last.book;
-                document.getElementById('inv-date').innerText = new Date(last.time).toLocaleString();
-                document.getElementById('mod-invoice').classList.replace('hidden','flex');
-            }
+        window.editPfpPrompt = () => {
+            const p = prompt("رابط الصورة الجديد:");
+            if(p) { update(ref(db, `users/${user.phone}`), { pfp: p }); user.pfp = p; localStorage.setItem('rafouf_u', JSON.stringify(user)); updateUI(); }
         };
 
         window.openAdd = () => document.getElementById('mod-book').classList.replace('hidden','flex');
         window.closeBookMod = () => document.getElementById('mod-book').classList.replace('flex','hidden');
-        
-        window.saveBook = async () => {
-            const t = document.getElementById('book-t').value, c = document.getElementById('book-c').value, d = document.getElementById('book-d').value;
-            if(!t || !c) return;
-            await push(ref(db, 'content'), { title: t, cover: c, description: d, ownerId: user.phone, ownerName: user.name, likes: 0, time: serverTimestamp() });
-            closeBookMod();
-        };
-
-        window.deleteBook = (id) => { if(confirm("حذف الكتاب؟")) remove(ref(db, `content/${id}`)); };
-
-        window.saveProfile = async () => {
-            const n = document.getElementById('edit-name').value;
-            if(n) {
-                user.name = n;
-                localStorage.setItem('rafouf_u', JSON.stringify(user));
-                await update(ref(db, `users/${user.phone}`), { name: n });
-                updateUI(); alert("تم التحديث");
-            }
-        };
-
-        window.editPfpPrompt = () => {
-            const p = prompt("أدخل رابط الصورة الجديد (URL):");
-            if(p && p.trim() !== "") {
-                user.pfp = p;
-                localStorage.setItem('rafouf_u', JSON.stringify(user));
-                update(ref(db, `users/${user.phone}`), { pfp: p });
-                updateUI();
-                alert("تم تحديث صورة الملف الشخصي بنجاح");
-            }
-        };
-
         window.logout = () => { localStorage.clear(); location.reload(); };
-
         if(user) loginSuccess();
         lucide.createIcons();
     </script>
