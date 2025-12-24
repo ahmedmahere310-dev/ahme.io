@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>رَفوف | تواصل وتبادل</title>
+    <title>رَفوف | تواصل اجتماعي حقيقي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -35,12 +35,20 @@
 
         .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; height: 75px; z-index: 1000; border-radius: 2.2rem; display: none; justify-content: space-around; align-items: center; }
         
-        .bubble { max-width: 85%; padding: 14px 18px; font-size: 14px; margin-bottom: 6px; position: relative; }
-        .bubble.mine { background: linear-gradient(135deg, #0284c7, #0ea5e9); align-self: flex-end; border-radius: 22px 22px 4px 22px; }
-        .bubble.theirs { background: rgba(255, 255, 255, 0.07); align-self: flex-start; border-radius: 22px 22px 22px 4px; }
+        .bubble { max-width: 80%; padding: 12px 16px; font-size: 14px; margin-bottom: 8px; line-height: 1.6; }
+        .bubble.mine { background: #0ea5e9; align-self: flex-end; border-radius: 18px 18px 4px 18px; color: white; }
+        .bubble.theirs { background: rgba(255, 255, 255, 0.1); align-self: flex-start; border-radius: 18px 18px 18px 4px; color: white; }
         
         ::-webkit-scrollbar { width: 0px; }
         .book-card-img { aspect-ratio: 1 / 1; object-fit: cover; border-radius: 1.5rem; }
+
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); z-index: 5000; display: none; align-items: flex-end; }
+        .modal.active { display: flex; }
+        .modal-content { background: #0f172a; width: 100%; border-radius: 3rem 3rem 0 0; padding: 2rem; max-height: 80vh; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s ease; }
+        .modal.active .modal-content { transform: translateY(0); }
+
+        .user-search-result { animation: slideUp 0.3s ease forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -76,7 +84,7 @@
             </div>
         </header>
         <div class="px-6 mb-6">
-            <div class="relative glass rounded-2xl overflow-hidden flex items-center px-4">
+            <div class="relative glass rounded-2xl overflow-hidden flex items-center px-4 shadow-xl border-white/5">
                 <i data-lucide="search" class="w-5 h-5 opacity-30 text-white"></i>
                 <input id="book-search" oninput="searchBooks()" type="text" placeholder="ابحث عن كتاب..." class="w-full p-4 bg-transparent outline-none text-sm font-bold text-white">
             </div>
@@ -84,58 +92,35 @@
         <div id="books-list" class="overflow-y-auto px-6 space-y-8 pb-28"></div>
     </section>
 
-    <!-- شاشة بروفايل شخص آخر -->
+    <!-- بروفايل شخص آخر -->
     <section id="scr-user-view" class="screen pt-6 overflow-y-auto">
         <header class="p-6 flex items-center gap-4">
             <button onclick="nav('scr-main')" class="p-2 glass rounded-xl text-white"><i data-lucide="arrow-right"></i></button>
             <h3 class="font-black text-lg text-white">الملف الشخصي</h3>
         </header>
         <div class="flex flex-col items-center px-6 text-center">
-            <div class="w-32 h-32 rounded-[3rem] glass p-1.5 shadow-2xl mb-4">
-                <img id="view-pfp" src="" class="w-full h-full object-cover rounded-[2.8rem]">
+            <div class="w-32 h-32 rounded-[3.5rem] glass p-1.5 shadow-2xl mb-4">
+                <img id="view-pfp" src="" class="w-full h-full object-cover rounded-[3.3rem]">
             </div>
             <h3 id="view-name" class="text-3xl font-black mb-2 text-white">...</h3>
             
             <div class="flex gap-8 mb-6 bg-white/5 py-3 px-8 rounded-3xl border border-white/5">
-                <div>
+                <div class="cursor-pointer" onclick="openFollowList('followers', window.viewingUser?.phone)">
                     <p id="view-fers" class="text-xl font-black text-sky-400">0</p>
                     <p class="text-[9px] font-black opacity-40 uppercase text-white">متابع</p>
                 </div>
                 <div class="w-[1px] bg-white/10 h-8 self-center"></div>
-                <div>
+                <div class="cursor-pointer" onclick="openFollowList('following', window.viewingUser?.phone)">
                     <p id="view-fing" class="text-xl font-black text-white">0</p>
                     <p class="text-[9px] font-black opacity-40 uppercase text-white">يتابع</p>
                 </div>
             </div>
 
-            <button id="view-follow-btn" onclick="toggleFollowView()" class="w-full max-w-xs py-4 rounded-2xl font-black text-sm mb-8 transition-all"></button>
+            <button id="view-follow-btn" onclick="toggleFollowView()" class="w-full max-w-xs py-4 rounded-2xl font-black text-sm mb-4 transition-all"></button>
+            <button onclick="openChatFromProfile()" class="w-full max-w-xs py-4 rounded-2xl font-black text-sm mb-8 bg-white/10 text-white border border-white/10">مراسلة</button>
 
-            <div class="w-full text-right mb-4">
-                <h4 class="text-xs font-black opacity-40 uppercase mr-2 text-white italic">كتب هذا المستخدم</h4>
-            </div>
+            <div class="w-full text-right mb-4"><h4 class="text-xs font-black opacity-40 uppercase mr-2 text-white italic">الكتب المعروضة</h4></div>
             <div id="view-user-books" class="w-full space-y-6 pb-20"></div>
-        </div>
-    </section>
-
-    <!-- المحادثات -->
-    <section id="scr-chats" class="screen pt-12 px-6">
-        <h2 class="text-4xl font-black mb-8 italic text-white">المحادثات</h2>
-        <div id="chats-list" class="space-y-3 overflow-y-auto"></div>
-    </section>
-
-    <!-- المحادثة النشطة -->
-    <section id="scr-chat-window" class="screen bg-slate-950 !pb-0">
-        <header class="p-4 glass rounded-none flex items-center gap-4 border-none border-b border-white/5 z-50">
-            <button onclick="nav('scr-chats')" class="p-2 text-white"><i data-lucide="arrow-right"></i></button>
-            <img id="chat-target-pfp" src="" class="w-11 h-11 rounded-full object-cover glass">
-            <h4 id="chat-target-name" class="font-bold text-sm text-white flex-grow">...</h4>
-        </header>
-        <div id="chat-messages" class="flex-grow overflow-y-auto p-6 flex flex-col pt-8"></div>
-        <div class="p-4 pb-10">
-            <div class="glass flex gap-2 p-2 px-3 items-center rounded-3xl border-white/10">
-                <input id="chat-input" type="text" placeholder="اكتب شيئاً..." class="flex-grow bg-transparent p-3 text-sm text-white outline-none">
-                <button onclick="sendMessage()" class="w-12 h-12 bg-sky-500 rounded-full flex items-center justify-center text-white"><i data-lucide="send" class="w-5 h-5 mr-1"></i></button>
-            </div>
         </div>
     </section>
 
@@ -143,17 +128,23 @@
     <section id="scr-profile" class="screen pt-12 px-6 overflow-y-auto items-center">
         <div class="w-full max-w-md flex flex-col items-center text-center">
             <div class="relative mb-6">
-                <div class="w-32 h-32 rounded-[3rem] glass p-1.5 shadow-2xl">
-                    <img id="profile-img" src="" class="w-full h-full object-cover rounded-[2.8rem]">
+                <div class="w-32 h-32 rounded-[3.5rem] glass p-1.5 shadow-2xl">
+                    <img id="profile-img" src="" class="w-full h-full object-cover rounded-[3.3rem]">
                 </div>
                 <button onclick="editPfpPrompt()" class="absolute bottom-0 right-0 bg-sky-500 w-10 h-10 rounded-2xl flex items-center justify-center border-4 border-slate-950 text-white"><i data-lucide="camera" class="w-5 h-5"></i></button>
             </div>
             <h3 id="profile-name" class="text-3xl font-black mb-2 text-white">...</h3>
             
             <div class="flex gap-8 mb-8 bg-white/5 py-4 px-8 rounded-3xl border border-white/5">
-                <div><p id="count-followers" class="text-2xl font-black text-sky-400">0</p><p class="text-[10px] font-black opacity-40 uppercase text-white">متابع</p></div>
+                <div class="cursor-pointer active:scale-95 transition-all" onclick="openFollowList('followers', window.user?.phone)">
+                    <p id="count-followers" class="text-2xl font-black text-sky-400">0</p>
+                    <p class="text-[10px] font-black opacity-40 uppercase text-white">متابع</p>
+                </div>
                 <div class="w-[1px] bg-white/10 h-10 self-center"></div>
-                <div><p id="count-following" class="text-2xl font-black text-white">0</p><p class="text-[10px] font-black opacity-40 uppercase text-white">يتابع</p></div>
+                <div class="cursor-pointer active:scale-95 transition-all" onclick="openFollowList('following', window.user?.phone)">
+                    <p id="count-following" class="text-2xl font-black text-white">0</p>
+                    <p class="text-[10px] font-black opacity-40 uppercase text-white">يتابع</p>
+                </div>
             </div>
 
             <div class="glass p-8 w-full rounded-[2.5rem] mb-6 space-y-6">
@@ -163,6 +154,49 @@
             <button onclick="logout()" class="w-full bg-red-500/10 text-red-500 py-5 rounded-2xl font-black text-xs uppercase mb-12 border border-red-500/10">تسجيل الخروج</button>
         </div>
     </section>
+
+    <!-- شاشة المحادثات -->
+    <section id="scr-chats" class="screen pt-12 px-6">
+        <h2 class="text-4xl font-black mb-2 italic text-white">الدردشة</h2>
+        <p class="text-[10px] opacity-40 font-black mb-6 uppercase tracking-widest">تواصل مع عشاق الكتب</p>
+        
+        <!-- خانة البحث عن المستخدمين -->
+        <div class="mb-6">
+            <div class="relative glass rounded-2xl overflow-hidden flex items-center px-4 border-white/5 shadow-lg">
+                <i data-lucide="users" class="w-4 h-4 opacity-30 text-white"></i>
+                <input id="user-search" oninput="searchUsers()" type="text" placeholder="ابحث عن أصدقاء..." class="w-full p-4 bg-transparent outline-none text-xs font-bold text-white">
+            </div>
+            <div id="user-search-results" class="hidden mt-2 glass rounded-2xl p-2 space-y-2 max-h-48 overflow-y-auto border-white/10"></div>
+        </div>
+
+        <h3 class="text-xs font-black opacity-20 uppercase mb-3 mr-1">المحادثات الأخيرة</h3>
+        <div id="chats-list" class="space-y-3 overflow-y-auto"></div>
+    </section>
+
+    <!-- المحادثة النشطة -->
+    <section id="scr-chat-window" class="screen bg-slate-950 !pb-0 z-[200]">
+        <header class="p-4 glass rounded-none flex items-center gap-4 border-none border-b border-white/10">
+            <button onclick="nav('scr-chats')" class="p-2 text-white"><i data-lucide="arrow-right"></i></button>
+            <img id="chat-target-pfp" src="" class="w-11 h-11 rounded-full object-cover glass border border-sky-500/20">
+            <h4 id="chat-target-name" class="font-bold text-sm text-white flex-grow">...</h4>
+        </header>
+        <div id="chat-messages" class="flex-grow overflow-y-auto p-6 flex flex-col gap-1"></div>
+        <div class="p-4 pb-10 bg-slate-950">
+            <div class="glass flex gap-2 p-2 px-3 items-center rounded-3xl border-white/10">
+                <input id="chat-input" type="text" placeholder="اكتب شيئاً..." class="flex-grow bg-transparent p-3 text-sm text-white outline-none">
+                <button onclick="sendMessage()" class="w-12 h-12 bg-sky-500 rounded-full flex items-center justify-center text-white"><i data-lucide="send" class="w-5 h-5 mr-1"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- القائمة المنبثقة (Followers/Following) -->
+    <div id="modal-list" class="modal" onclick="closeModal(event)">
+        <div class="modal-content glass" onclick="event.stopPropagation()">
+            <div class="w-12 h-1 bg-white/10 rounded-full mx-auto mb-6"></div>
+            <h4 id="modal-title" class="text-2xl font-black mb-6 text-white italic">...</h4>
+            <div id="modal-items" class="space-y-4 pb-10"></div>
+        </div>
+    </div>
 
     <!-- الملاحة -->
     <nav id="nav-bar" class="nav-bar glass shadow-2xl border-white/10">
@@ -195,11 +229,13 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        let user = JSON.parse(localStorage.getItem('rafouf_u'));
-        let allBooks = [];
-        let viewingUser = null;
-        let chatTarget = null;
-        let currentChatRef = null;
+        // تصدير المتغيرات للنطاق العالمي
+        window.user = JSON.parse(localStorage.getItem('rafouf_u'));
+        window.allBooks = [];
+        window.allUsers = []; // تخزين كافة المستخدمين للبحث
+        window.viewingUser = null;
+        window.chatTarget = null;
+        window.currentChatRef = null;
 
         window.nav = (id) => {
             const screens = document.querySelectorAll('.screen');
@@ -209,6 +245,13 @@
             const map = {'scr-main':'n-main','scr-chats':'n-chats','scr-profile':'n-profile'};
             if(map[id]) document.getElementById(map[id]).classList.remove('opacity-30');
             lucide.createIcons();
+            if(id !== 'scr-chat-window' && window.currentChatRef) { off(window.currentChatRef); window.currentChatRef = null; }
+            
+            // تصفير نتائج بحث المستخدمين عند مغادرة شاشة الدردشة
+            if(id !== 'scr-chats') {
+                document.getElementById('user-search').value = '';
+                document.getElementById('user-search-results').classList.add('hidden');
+            }
         };
 
         window.checkUser = async () => {
@@ -216,14 +259,14 @@
             if(!p) return;
             const snap = await get(ref(db, `users/${p}`));
             if(snap.exists()){
-                user = snap.val();
+                window.user = snap.val();
             } else {
                 const n = document.getElementById('login-name').value.trim();
                 if(!n) { document.getElementById('new-user-fields').classList.remove('hidden'); return; }
-                user = { name: n, phone: p, pfp: `https://api.dicebear.com/7.x/avataaars/svg?seed=${n}`, followers: 0, following: 0 };
-                await set(ref(db, `users/${p}`), user);
+                window.user = { name: n, phone: p, pfp: `https://api.dicebear.com/7.x/avataaars/svg?seed=${n}`, followers: 0, following: 0 };
+                await set(ref(db, `users/${p}`), window.user);
             }
-            localStorage.setItem('rafouf_u', JSON.stringify(user));
+            localStorage.setItem('rafouf_u', JSON.stringify(window.user));
             loginSuccess();
         };
 
@@ -235,48 +278,121 @@
         }
 
         function updateUI() {
-            if(!user) return;
-            document.getElementById('header-pfp').src = user.pfp;
-            document.getElementById('profile-img').src = user.pfp;
-            document.getElementById('profile-name').innerText = user.name;
-            document.getElementById('edit-name').value = user.name;
-            document.getElementById('count-followers').innerText = user.followers || 0;
-            document.getElementById('count-following').innerText = user.following || 0;
+            if(!window.user) return;
+            document.getElementById('header-pfp').src = window.user.pfp;
+            document.getElementById('profile-img').src = window.user.pfp;
+            document.getElementById('profile-name').innerText = window.user.name;
+            document.getElementById('edit-name').value = window.user.name;
+            document.getElementById('count-followers').innerText = window.user.followers || 0;
+            document.getElementById('count-following').innerText = window.user.following || 0;
         }
 
         function syncData() {
-            onValue(ref(db, `users/${user.phone}`), (snap) => {
+            if(!window.user) return;
+            
+            // استماع لبياناتي الشخصية
+            onValue(ref(db, `users/${window.user.phone}`), (snap) => {
                 if(snap.exists()) {
-                    user = snap.val();
-                    localStorage.setItem('rafouf_u', JSON.stringify(user));
+                    window.user = snap.val();
+                    localStorage.setItem('rafouf_u', JSON.stringify(window.user));
                     updateUI();
                 }
             });
-            onValue(ref(db, 'content'), (snap) => {
-                allBooks = [];
+
+            // استماع لكافة المستخدمين للبحث
+            onValue(ref(db, 'users'), (snap) => {
                 if(snap.exists()) {
-                    Object.entries(snap.val()).forEach(([id, data]) => allBooks.push({id, ...data}));
-                    renderBooks(allBooks.reverse());
-                    if(viewingUser) renderUserView(viewingUser.phone);
+                    window.allUsers = Object.values(snap.val());
                 }
             });
+
+            // استماع للكتب
+            onValue(ref(db, 'content'), (snap) => {
+                window.allBooks = [];
+                if(snap.exists()) {
+                    Object.entries(snap.val()).forEach(([id, data]) => window.allBooks.push({id, ...data}));
+                    renderBooks(window.allBooks.slice().reverse());
+                }
+            });
+
+            // استماع للمحادثات
+            onValue(ref(db, `user_chats/${window.user.phone}`), (snap) => {
+                const list = document.getElementById('chats-list');
+                list.innerHTML = '';
+                if(snap.exists()){
+                    Object.entries(snap.val()).forEach(([tid, c]) => {
+                        list.innerHTML += `
+                            <div onclick="openChat('${tid}')" class="glass p-5 rounded-[2rem] flex items-center gap-4 cursor-pointer hover:bg-white/5 transition-all text-white">
+                                <img src="${c.pfp}" class="w-14 h-14 rounded-2xl object-cover glass border border-white/5">
+                                <div class="flex-grow text-right">
+                                    <h4 class="font-black text-sm">${c.name}</h4>
+                                    <p class="text-[11px] opacity-40 line-clamp-1">${c.lastMsg || 'ابدأ المحادثة...'}</p>
+                                </div>
+                                <i data-lucide="chevron-left" class="opacity-20 text-white"></i>
+                            </div>`;
+                    });
+                } else {
+                    list.innerHTML = `<div class="text-center py-10 opacity-20 text-[10px] font-black uppercase">لا توجد محادثات نشطة</div>`;
+                }
+                lucide.createIcons();
+            });
         }
+
+        // دالة البحث عن المستخدمين
+        window.searchUsers = () => {
+            const query = document.getElementById('user-search').value.toLowerCase().trim();
+            const resultsDiv = document.getElementById('user-search-results');
+            
+            if(!query) {
+                resultsDiv.innerHTML = '';
+                resultsDiv.classList.add('hidden');
+                return;
+            }
+
+            const filtered = window.allUsers.filter(u => 
+                (u.name.toLowerCase().includes(query) || u.phone.includes(query)) && u.phone !== window.user.phone
+            ).slice(0, 5);
+
+            if(filtered.length === 0) {
+                resultsDiv.innerHTML = '<p class="text-[10px] text-center opacity-40 p-4 font-black">لا يوجد نتائج</p>';
+            } else {
+                resultsDiv.innerHTML = filtered.map(u => `
+                    <div onclick="openUserView('${u.phone}')" class="user-search-result flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer transition-all">
+                        <img src="${u.pfp}" class="w-10 h-10 rounded-full glass object-cover">
+                        <div class="flex-grow text-right">
+                            <h5 class="text-xs font-black text-white">${u.name}</h5>
+                            <p class="text-[9px] opacity-30">@${u.phone.slice(-4)}</p>
+                        </div>
+                        <i data-lucide="chevron-left" class="w-3 h-3 opacity-20"></i>
+                    </div>
+                `).join('');
+            }
+            
+            resultsDiv.classList.remove('hidden');
+            lucide.createIcons();
+        };
+
+        window.searchBooks = () => {
+            const query = document.getElementById('book-search').value.toLowerCase();
+            const filtered = window.allBooks.filter(b => b.title.toLowerCase().includes(query));
+            renderBooks(filtered.slice().reverse());
+        };
 
         function renderBooks(books) {
             const list = document.getElementById('books-list');
             list.innerHTML = '';
             books.forEach(b => {
-                const liked = b.likedBy && b.likedBy[user.phone];
+                const liked = b.likedBy && b.likedBy[window.user.phone];
                 list.innerHTML += `
                     <div class="glass p-5 rounded-[2.5rem] flex flex-col relative">
                         <div class="flex gap-5 mb-5 items-start">
                             <img src="${b.cover}" class="book-card-img w-28 h-28 shrink-0 shadow-2xl">
                             <div class="flex-grow text-right">
                                 <h3 class="font-black text-lg mb-1 text-white">${b.title}</h3>
-                                <div onclick="openUserView('${b.ownerId}')" class="flex items-center gap-2 mb-2 cursor-pointer">
+                                <div onclick="openUserView('${b.ownerId}')" class="flex items-center gap-2 mb-2 cursor-pointer active:opacity-50 transition-all">
                                     <p class="text-[10px] text-sky-400 font-black uppercase">@${b.ownerName}</p>
                                 </div>
-                                <p class="text-[10px] text-white opacity-40 line-clamp-2">${b.description || ''}</p>
+                                <p class="text-[10px] text-white opacity-40 line-clamp-2">${b.description || 'لا يوجد وصف...'}</p>
                             </div>
                         </div>
                         <div class="flex justify-between items-center pt-4 border-t border-white/5">
@@ -290,14 +406,18 @@
             lucide.createIcons();
         }
 
-        // فتح بروفايل مستخدم آخر
         window.openUserView = async (targetId) => {
-            if(targetId === user.phone) { window.nav('scr-profile'); return; }
+            if(!window.user) return;
+            if(targetId === window.user.phone) { window.nav('scr-profile'); return; }
             const snap = await get(ref(db, `users/${targetId}`));
             if(snap.exists()) {
-                viewingUser = snap.val();
+                window.viewingUser = snap.val();
                 renderUserView(targetId);
                 window.nav('scr-user-view');
+                
+                // إخفاء نتائج البحث بعد فتح البروفايل
+                document.getElementById('user-search-results').classList.add('hidden');
+                document.getElementById('user-search').value = '';
             }
         };
 
@@ -306,82 +426,173 @@
             onValue(snapRef, (s) => {
                 const u = s.val();
                 if(!u) return;
+                window.viewingUser = u;
                 document.getElementById('view-pfp').src = u.pfp;
                 document.getElementById('view-name').innerText = u.name;
                 document.getElementById('view-fers').innerText = u.followers || 0;
                 document.getElementById('view-fing').innerText = u.following || 0;
-                
-                const isFollowing = user.followingList && user.followingList[targetId];
+                const isFollowing = window.user.followingList && window.user.followingList[targetId];
                 const btn = document.getElementById('view-follow-btn');
                 btn.innerText = isFollowing ? "إلغاء المتابعة" : "متابعة +";
-                btn.className = isFollowing ? 
-                    "w-full max-w-xs py-4 rounded-2xl font-black text-sm mb-8 bg-white/5 border border-white/10 text-white opacity-50" : 
-                    "w-full max-w-xs py-4 rounded-2xl font-black text-sm mb-8 bg-sky-500 text-white shadow-xl shadow-sky-900/40";
-
+                btn.className = isFollowing ? "w-full max-w-xs py-4 rounded-2xl font-black text-sm mb-4 bg-white/5 border border-white/10 text-white opacity-50" : "w-full max-w-xs py-4 rounded-2xl font-black text-sm mb-4 bg-sky-500 text-white shadow-xl";
+                
                 const booksContainer = document.getElementById('view-user-books');
-                const userBooks = allBooks.filter(b => b.ownerId === targetId);
                 booksContainer.innerHTML = '';
-                userBooks.forEach(b => {
-                    booksContainer.innerHTML += `
-                        <div class="glass p-4 rounded-[2rem] flex gap-4 items-center">
-                            <img src="${b.cover}" class="w-16 h-16 rounded-xl object-cover shrink-0">
-                            <div class="flex-grow text-right">
-                                <h5 class="font-black text-sm text-white">${b.title}</h5>
-                                <p class="text-[9px] opacity-40 text-white">${b.likes} إعجاب</p>
-                            </div>
-                        </div>`;
-                });
-            }, { onlyOnce: false });
+                const uBooks = window.allBooks.filter(b => b.ownerId === targetId);
+                if(uBooks.length === 0) {
+                    booksContainer.innerHTML = `<p class="text-center py-10 opacity-20 text-[10px] font-black uppercase">لم يقم بنشر أي كتب بعد</p>`;
+                } else {
+                    uBooks.forEach(b => {
+                        booksContainer.innerHTML += `<div class="glass p-4 rounded-[2rem] flex gap-4 items-center"><img src="${b.cover}" class="w-16 h-16 rounded-xl object-cover shrink-0"><div class="flex-grow text-right"><h5 class="font-black text-sm text-white">${b.title}</h5><p class="text-[9px] opacity-40 text-white">${b.likes} إعجاب</p></div></div>`;
+                    });
+                }
+            });
         }
 
+        window.openFollowList = async (type, targetId) => {
+            if(!targetId) return;
+            const modal = document.getElementById('modal-list');
+            const title = document.getElementById('modal-title');
+            const items = document.getElementById('modal-items');
+            
+            title.innerText = type === 'followers' ? 'المتابعون' : 'يتابعهم';
+            items.innerHTML = '<p class="text-center opacity-30 py-10 text-white">جاري التحميل...</p>';
+            modal.classList.add('active');
+
+            const userSnap = await get(ref(db, `users/${targetId}`));
+            if(!userSnap.exists()) return;
+
+            const listData = type === 'followers' ? userSnap.val().followersList : userSnap.val().followingList;
+
+            if(!listData) {
+                items.innerHTML = '<p class="text-center opacity-30 py-10 text-white italic text-xs">القائمة فارغة</p>';
+                return;
+            }
+
+            items.innerHTML = '';
+            for(let phone in listData) {
+                const personSnap = await get(ref(db, `users/${phone}`));
+                if(personSnap.exists()) {
+                    const p = personSnap.val();
+                    const item = document.createElement('div');
+                    item.className = "flex items-center gap-4 glass p-4 rounded-[1.5rem] active:bg-white/5 transition-all cursor-pointer";
+                    item.innerHTML = `
+                        <img src="${p.pfp}" class="w-12 h-12 rounded-xl object-cover glass">
+                        <div class="flex-grow text-right"><h5 class="font-black text-sm text-white">${p.name}</h5><p class="text-[10px] opacity-30 uppercase font-black text-white">@${p.phone.slice(-4)}</p></div>
+                        <i data-lucide="arrow-left" class="w-4 h-4 opacity-20 text-white"></i>
+                    `;
+                    item.onclick = () => { window.closeModal(); window.openUserView(p.phone); };
+                    items.appendChild(item);
+                }
+            }
+            lucide.createIcons();
+        };
+
+        window.closeModal = (e) => {
+            if(!e || e.target.id === 'modal-list') document.getElementById('modal-list').classList.remove('active');
+        };
+
+        window.openChat = async (tid) => {
+            const snap = await get(ref(db, `users/${tid}`));
+            if(!snap.exists()) return;
+            window.chatTarget = snap.val();
+            document.getElementById('chat-target-name').innerText = window.chatTarget.name;
+            document.getElementById('chat-target-pfp').src = window.chatTarget.pfp;
+            window.nav('scr-chat-window');
+            
+            const cid = [window.user.phone, tid].sort().join('_');
+            const box = document.getElementById('chat-messages');
+            if(window.currentChatRef) off(window.currentChatRef);
+            window.currentChatRef = ref(db, `chats/${cid}`);
+            
+            onValue(window.currentChatRef, (s) => {
+                box.innerHTML = '';
+                if(s.exists()){
+                    Object.values(s.val()).forEach(m => {
+                        const div = document.createElement('div');
+                        div.className = `bubble ${m.sender === window.user.phone ? 'mine' : 'theirs'}`;
+                        div.innerText = m.text;
+                        box.appendChild(div);
+                    });
+                    box.scrollTop = box.scrollHeight;
+                }
+            });
+        };
+
+        window.openChatFromProfile = () => {
+            if(window.viewingUser) window.openChat(window.viewingUser.phone);
+        };
+
+        window.sendMessage = async (manualTxt = null) => {
+            const inp = document.getElementById('chat-input');
+            const txt = manualTxt || inp.value.trim();
+            if(!txt || !window.chatTarget || !window.user) return;
+            const cid = [window.user.phone, window.chatTarget.phone].sort().join('_');
+            await push(ref(db, `chats/${cid}`), { sender: window.user.phone, text: txt, time: serverTimestamp() });
+            const updates = {};
+            updates[`user_chats/${window.user.phone}/${window.chatTarget.phone}`] = { lastMsg: txt, pfp: window.chatTarget.pfp, name: window.chatTarget.name };
+            updates[`user_chats/${window.chatTarget.phone}/${window.user.phone}`] = { lastMsg: txt, pfp: window.user.pfp, name: window.user.name };
+            await update(ref(db), updates);
+            if(!manualTxt) inp.value = '';
+        };
+
+        window.requestSwap = async (oid, oname, title) => {
+            await window.openChat(oid);
+            window.sendMessage(`مرحباً! أعجبني كتابك "${title}"، هل تود مبادلته؟`);
+        };
+
         window.toggleFollowView = async () => {
-            if(!viewingUser) return;
-            const tid = viewingUser.phone;
-            const isFollowing = user.followingList && user.followingList[tid];
-            await update(ref(db, `users/${user.phone}`), {
-                following: increment(isFollowing ? -1 : 1),
-                [`followingList/${tid}`]: isFollowing ? null : true
-            });
-            await update(ref(db, `users/${tid}`), {
-                followers: increment(isFollowing ? -1 : 1),
-                [`followersList/${user.phone}`]: isFollowing ? null : true
-            });
+            if(!window.viewingUser || !window.user) return;
+            const tid = window.viewingUser.phone;
+            const isFollowing = window.user.followingList && window.user.followingList[tid];
+            await update(ref(db, `users/${window.user.phone}`), { following: increment(isFollowing ? -1 : 1), [`followingList/${tid}`]: isFollowing ? null : true });
+            await update(ref(db, `users/${tid}`), { followers: increment(isFollowing ? -1 : 1), [`followersList/${window.user.phone}`]: isFollowing ? null : true });
         };
 
         window.toggleLike = async (bid) => {
-            const b = allBooks.find(x => x.id === bid);
-            const liked = b.likedBy && b.likedBy[user.phone];
-            await update(ref(db, `content/${bid}`), {
-                likes: increment(liked ? -1 : 1),
-                [`likedBy/${user.phone}`]: liked ? null : true
-            });
+            if(!window.user) return;
+            const b = window.allBooks.find(x => x.id === bid);
+            const liked = b.likedBy && b.likedBy[window.user.phone];
+            await update(ref(db, `content/${bid}`), { likes: increment(liked ? -1 : 1), [`likedBy/${window.user.phone}`]: liked ? null : true });
         };
 
-        window.requestSwap = (oid, oname, title) => {
-            const cid = [user.phone, oid].sort().join('_');
-            const txt = `أرغب في مبادلة كتابك: ${title}`;
-            push(ref(db, `chats/${cid}`), { sender: user.phone, text: txt });
-            update(ref(db, `user_chats/${user.phone}/${oid}`), { lastMsg: txt, pfp: viewingUser?.pfp || '', name: oname });
-            update(ref(db, `user_chats/${oid}/${user.phone}`), { lastMsg: txt, pfp: user.pfp, name: user.name });
-            window.nav('scr-chats');
+        window.saveProfile = async () => {
+            const newName = document.getElementById('edit-name').value;
+            if(newName && window.user) {
+                await update(ref(db, `users/${window.user.phone}`), { name: newName });
+                window.user.name = newName;
+                localStorage.setItem('rafouf_u', JSON.stringify(window.user));
+                updateUI();
+            }
         };
 
         window.saveBook = async () => {
             const t = document.getElementById('book-t').value, c = document.getElementById('book-c').value, d = document.getElementById('book-d').value;
-            if(!t || !c) return;
-            await push(ref(db, 'content'), { title: t, cover: c, description: d, ownerId: user.phone, ownerName: user.name, likes: 0 });
-            closeBookMod();
+            if(!t || !c || !window.user) return;
+            await push(ref(db, 'content'), { title: t, cover: c, description: d, ownerId: window.user.phone, ownerName: window.user.name, likes: 0, time: serverTimestamp() });
+            window.closeBookMod();
         };
 
         window.editPfpPrompt = () => {
             const p = prompt("رابط الصورة الجديد:");
-            if(p) { update(ref(db, `users/${user.phone}`), { pfp: p }); user.pfp = p; localStorage.setItem('rafouf_u', JSON.stringify(user)); updateUI(); }
+            if(p && window.user) { 
+                update(ref(db, `users/${window.user.phone}`), { pfp: p }); 
+                window.user.pfp = p; 
+                localStorage.setItem('rafouf_u', JSON.stringify(window.user)); 
+                updateUI(); 
+            }
         };
 
         window.openAdd = () => document.getElementById('mod-book').classList.replace('hidden','flex');
-        window.closeBookMod = () => document.getElementById('mod-book').classList.replace('flex','hidden');
+        window.closeBookMod = () => {
+            document.getElementById('mod-book').classList.replace('flex','hidden');
+            document.getElementById('book-t').value = '';
+            document.getElementById('book-c').value = '';
+            document.getElementById('book-d').value = '';
+        };
         window.logout = () => { localStorage.clear(); location.reload(); };
-        if(user) loginSuccess();
+        
+        if(window.user) loginSuccess();
         lucide.createIcons();
     </script>
 </body>
